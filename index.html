@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drug Tariff Analytics</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f3f6fa;
+      color: #1f2937;
+    }
+    h1 { color: #174ea6; }
+    section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+    a, button {
+      display: inline-block;
+      margin: 8px 8px 8px 0;
+    }
+    button {
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drug Tariff Analytics</h1>
+  <p>Explore drug tariff prices and monthly product history.</p>
+
+  <section>
+    <h2>Dashboard summary</h2>
+    <p id="status">Loading dashboard data...</p>
+    <a href="/api/export.csv">Download price history (CSV)</a>
+  </section>
+
+  <section>
+    <h2>Product data</h2>
+    <pre id="products">Loading products...</pre>
+  </section>
+
+  <script>
+    fetch("/api/data")
+      .then(response => {
+        if (!response.ok) throw new Error("Could not load dashboard");
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById("status").textContent =
+          "Products: " + (data.products || []).length +
+          " | Months: " + (data.months || []).join(", ");
+
+        document.getElementById("products").textContent =
+          JSON.stringify(data.products || [], null, 2);
+      })
+      .catch(() => {
+        document.getElementById("status").textContent =
+          "Dashboard data could not be loaded.";
+        document.getElementById("products").textContent = "";
+      });
+  </script>
+</body>
+</html>
