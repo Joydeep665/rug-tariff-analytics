@@ -2,73 +2,365 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Drug Tariff Analytics</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #f3f6fa;
-      color: #1f2937;
-    }
-    h1 { color: #174ea6; }
-    section {
-      background: white;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 12px;
-    }
-    a, button {
-      display: inline-block;
-      margin: 8px 8px 8px 0;
-    }
-    button {
-      padding: 10px 16px;
-      cursor: pointer;
-    }
-    pre {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drug Tariff Analytics | Intelligence Dashboard</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg:#080f1e; --panel:#101a2c; --panel2:#142138;
+  --border:#23314a; --text:#f0f5ff; --muted:#91a1bb;
+  --teal:#36e0c0; --blue:#7298ff; --green:#3cdda0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:Inter,Arial,sans-serif;font-size:14px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.layout{min-height:100vh}
+nav{height:76px;display:flex;align-items:center;justify-content:space-between;
+padding:0 6%;border-bottom:1px solid var(--border);gap:20px}
+.brand{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:750}
+.logo{width:38px;height:38px;display:grid;place-items:center;
+background:#123b40;color:var(--teal);border:1px solid #24645e;
+border-radius:11px;font-size:21px}
+.brand small{display:block;font-size:10px;letter-spacing:2px;
+color:var(--muted);font-weight:500;margin-top:4px}
+.navlinks{display:flex;gap:25px;color:var(--muted);font-size:12px}
+.navlinks a:hover,.navlinks a.active{color:var(--teal)}
+.navright{display:flex;align-items:center;gap:15px}
+.live{color:var(--green);font-size:11px}
+.theme{background:var(--panel2);color:var(--text);border:1px solid var(--border);
+padding:9px 12px;border-radius:9px}
+main{max-width:1200px;margin:auto;padding:55px 25px 60px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:55px;align-items:center}
+.eyebrow{color:var(--teal);font-size:11px;letter-spacing:2.5px;
+font-weight:700;text-transform:uppercase}
+h1{font-size:clamp(38px,5vw,61px);line-height:1.08;letter-spacing:-2px;
+margin:22px 0}
+h1 span{color:var(--teal)}
+.intro{color:var(--muted);font-size:15px;line-height:1.9;max-width:510px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{padding:13px 18px;border-radius:9px;font-weight:700;font-size:12px;
+display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.primary{background:var(--teal);color:#07151b;border:1px solid var(--teal)}
+.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn:hover{filter:brightness(1.1)}
+.chartbox,.panel,.stat{background:var(--panel);border:1px solid var(--border);
+border-radius:15px}
+.chartbox{padding:24px;min-width:0}
+.charttop{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.charttop h3{font-size:14px;margin:0 0 8px}
+.muted{color:var(--muted)}
+.small{font-size:11px}
+.pill{font-size:10px;padding:7px 9px;border-radius:7px;
+background:#12352f;color:var(--green)}
+.bigprice{font-size:31px;font-weight:750;margin:24px 0 8px}
+.change{font-size:11px;color:var(--green)}
+.chart{width:100%;height:auto;display:block;margin-top:20px;overflow:visible}
+.chartlabels{display:flex;justify-content:space-between;color:var(--muted);
+font-size:10px;margin-top:8px}
+.chartnote{border-top:1px solid var(--border);margin-top:20px;padding-top:17px;
+display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
+.section{margin-top:62px;scroll-margin-top:25px}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;
+gap:15px;margin-bottom:22px}
+.sectionhead h2{font-size:24px;letter-spacing:-.5px;margin:8px 0}
+.sectionhead p{color:var(--muted);margin:0;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.stat{padding:21px}
+.statlabel{color:var(--muted);font-size:11px}
+.statvalue{font-size:28px;font-weight:750;margin:17px 0 9px}
+.statfoot{font-size:10px;color:var(--teal)}
+.panel{padding:23px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;text-align:left}
+th{font-size:10px;text-transform:uppercase;letter-spacing:1px;
+color:var(--muted);font-weight:600}
+th,td{padding:15px 12px;border-bottom:1px solid var(--border)}
+td{font-size:12px}
+tbody tr:hover{background:var(--panel2)}
+.badge{background:#153b37;color:var(--teal);padding:5px 8px;
+border-radius:5px;font-size:10px}
+footer{border-top:1px solid var(--border);padding:25px 6%;
+display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;
+color:var(--muted);font-size:11px}
+body.light{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--panel2:#eaf0f8;
+--border:#dce4ef;--text:#17243a;--muted:#63748c;--teal:#008e7b}
+.notice{color:var(--muted);font-size:12px;line-height:1.7}
+@media(max-width:850px){
+ nav{padding:0 20px}.navlinks{display:none}
+ main{padding:38px 18px}.hero{grid-template-columns:1fr;gap:30px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ h1{font-size:46px}.section{margin-top:45px}
+}
+@media(max-width:440px){
+ .brand{font-size:13px}.brand small{font-size:9px}
+ .live{display:none}.stats{gap:9px}.stat{padding:15px}
+ .statvalue{font-size:23px}.chartbox{padding:17px}
+ h1{font-size:40px}
+}
+</style>
 </head>
 <body>
-  <h1>Drug Tariff Analytics</h1>
-  <p>Explore drug tariff prices and monthly product history.</p>
+<div class="layout">
+<nav>
+  <a class="brand" href="#overview">
+    <span class="logo">✚</span>
+    <span>DRUG TARIFF<small>ANALYTICS PLATFORM</small></span>
+  </a>
+  <div class="navlinks">
+    <a class="active" href="#overview">Overview</a>
+    <a href="#trends">Trends</a>
+    <a href="#products">Products</a>
+    <a href="#categories">Categories</a>
+    <a href="#concessions">Concessions</a>
+    <a href="#admin">Admin</a>
+  </div>
+  <div class="navright">
+    <span class="live">● LIVE DATA</span>
+    <button class="theme" id="theme" aria-label="Toggle colour theme">☼</button>
+  </div>
+</nav>
 
-  <section>
-    <h2>Dashboard summary</h2>
-    <p id="status">Loading dashboard data...</p>
-    <a href="/api/export.csv">Download price history (CSV)</a>
-  </section>
+<main>
+<section class="hero" id="overview">
+  <div>
+    <div class="eyebrow">● &nbsp; Pharmaceutical intelligence</div>
+    <h1>Drug Tariff<br><span>Intelligence.</span></h1>
+    <p class="intro">Understand pharmaceutical pricing with clarity.
+    Explore monthly drug tariff movements, compare product prices,
+    and discover trends in the UK pharmaceutical market.</p>
+    <div class="actions">
+      <a class="btn primary" href="#trends">Explore price trends ↗</a>
+      <a class="btn secondary" href="/api/export.csv">↓ Download CSV</a>
+    </div>
+  </div>
 
-  <section>
-    <h2>Product data</h2>
-    <pre id="products">Loading products...</pre>
-  </section>
+  <div class="chartbox" id="trends">
+    <div class="charttop">
+      <div><h3>Price Index Overview</h3>
+      <span class="muted small">Monthly tariff history</span></div>
+      <span class="pill">● API CONNECTED</span>
+    </div>
+    <div class="bigprice" id="price">—</div>
+    <div class="change" id="priceNote">Loading available price data…</div>
+    <svg class="chart" viewBox="0 0 440 175" role="img"
+    aria-label="Monthly price index chart">
+      <defs>
+        <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#36e0c0" stop-opacity=".28"/>
+          <stop offset="100%" stop-color="#36e0c0" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <g stroke="#29364d" stroke-dasharray="4 5">
+        <path d="M0 25H440 M0 65H440 M0 105H440 M0 145H440"/>
+      </g>
+      <path id="chartArea" fill="url(#area)"
+      d="M0 130 L45 110 L90 119 L135 80 L180 92 L225 60 L270 73 L315 39 L360 54 L405 18 L440 28 L440 160 L0 160 Z"/>
+      <path id="chartLine" d="M0 130 L45 110 L90 119 L135 80 L180 92 L225 60 L270 73 L315 39 L360 54 L405 18 L440 28"
+      fill="none" stroke="#36e0c0" stroke-width="3"
+      stroke-linecap="round" stroke-linejoin="round"/>
+      <circle id="chartDot" cx="440" cy="28" r="5" fill="#36e0c0"
+      stroke="#101a2c" stroke-width="3"/>
+    </svg>
+    <div class="chartlabels" id="chartLabels">
+      <span>Start</span><span>Monthly history</span><span>Latest</span>
+    </div>
+    <div class="chartnote"><span>PRICE MOVEMENT</span><span>Monthly data</span></div>
+  </div>
+</section>
 
-  <script>
-    fetch("/api/data")
-      .then(response => {
-        if (!response.ok) throw new Error("Could not load dashboard");
-        return response.json();
-      })
-      .then(data => {
-        document.getElementById("status").textContent =
-          "Products: " + (data.products || []).length +
-          " | Months: " + (data.months || []).join(", ");
+<section class="section" id="categories">
+  <div class="sectionhead">
+    <div><div class="eyebrow">At a glance</div><h2>Market snapshot</h2>
+    <p>A summary of the data available from your project API.</p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="statlabel">TOTAL PRODUCTS</div>
+      <div class="statvalue" id="productCount">—</div>
+      <div class="statfoot">Products in dataset</div></div>
+    <div class="stat"><div class="statlabel">MONTHLY PERIODS</div>
+      <div class="statvalue" id="monthCount">—</div>
+      <div class="statfoot">Periods available</div></div>
+    <div class="stat"><div class="statlabel">DATA CONNECTION</div>
+      <div class="statvalue" id="apiState" style="font-size:21px">Loading</div>
+      <div class="statfoot">Backend API status</div></div>
+    <div class="stat"><div class="statlabel">LATEST PERIOD</div>
+      <div class="statvalue" id="latestMonth" style="font-size:21px">—</div>
+      <div class="statfoot">From available history</div></div>
+  </div>
+</section>
 
-        document.getElementById("products").textContent =
-          JSON.stringify(data.products || [], null, 2);
-      })
-      .catch(() => {
-        document.getElementById("status").textContent =
-          "Dashboard data could not be loaded.";
-        document.getElementById("products").textContent = "";
-      });
-  </script>
+<section class="section" id="products">
+  <div class="sectionhead">
+    <div><div class="eyebrow">Explore the dataset</div><h2>Product intelligence</h2>
+    <p>Browse product records returned by your existing API.</p></div>
+    <a class="btn secondary" href="/api/export.csv">↓ Export data</a>
+  </div>
+  <div class="panel">
+    <div class="tablewrap">
+      <table>
+        <thead id="tableHead"><tr><th>Product</th><th>Details</th></tr></thead>
+        <tbody id="productRows"><tr><td colspan="2" class="muted">Loading product data…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="notice" id="tableNote">Connecting to /api/data…</p>
+  </div>
+</section>
+
+<section class="section" id="concessions">
+  <div class="panel">
+    <div class="eyebrow">Data transparency</div>
+    <h2>Pricing insights, made clearer.</h2>
+    <p class="notice">Explore tariff history and product information from
+    the available dataset. Values and trends are displayed only when
+    supported by the data returned by the application.</p>
+  </div>
+</section>
+
+<section class="section" id="admin">
+  <div class="panel">
+    <div class="eyebrow">System information</div>
+    <h2>Application status</h2>
+    <p class="notice" id="systemNote">Checking the application data service.</p>
+  </div>
+</section>
+</main>
+<footer>
+  <span>DRUG TARIFF ANALYTICS</span>
+  <span>Pharmaceutical pricing intelligence · Data-driven insights</span>
+</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+$("theme").addEventListener("click", () => {
+  document.body.classList.toggle("light");
+});
+
+function formatValue(value) {
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "number") return value.toLocaleString();
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function drawChart(months, products) {
+  const values = [];
+  const keys = ["price", "tariff_price", "monthly_price", "amount", "cost"];
+  products.forEach(product => {
+    if (!product || typeof product !== "object") return;
+    keys.forEach(key => {
+      const v = Number(product[key]);
+      if (product[key] !== "" && product[key] !== undefined && Number.isFinite(v) && v > 0) {
+        values.push(v);
+      }
+    });
+  });
+
+  const history = Array.isArray(months) ? months : [];
+  $("chartLabels").innerHTML = "";
+  [history[0] || "Start", history.length ? history[Math.floor(history.length / 2)] : "History",
+   history[history.length - 1] || "Latest"].forEach(label => {
+    const span = document.createElement("span");
+    span.textContent = label;
+    $("chartLabels").appendChild(span);
+  });
+
+  if (values.length < 2) {
+    $("price").textContent = "—";
+    $("priceNote").textContent = "Monthly price series is not available in the API response.";
+    return;
+  }
+
+  const min = Math.min(...values), max = Math.max(...values);
+  const points = values.slice(0, 30).reverse();
+  const coords = points.map((v, i) => {
+    const x = points.length === 1 ? 220 : i * 440 / (points.length - 1);
+    const y = max === min ? 85 : 145 - ((v - min) / (max - min)) * 120;
+    return [x, y];
+  });
+  const line = coords.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join(" ");
+  $("chartLine").setAttribute("d", line);
+  $("chartArea").setAttribute("d", line + " L440 160 L0 160 Z");
+  const last = coords[coords.length - 1];
+  $("chartDot").setAttribute("cx", last[0]);
+  $("chartDot").setAttribute("cy", last[1]);
+  $("price").textContent = formatValue(points[points.length - 1]);
+  $("priceNote").textContent = "Latest available numeric price field";
+}
+
+function renderProducts(products) {
+  const rows = $("productRows");
+  const head = $("tableHead");
+  rows.replaceChildren();
+  head.replaceChildren();
+
+  if (!products.length) {
+    rows.innerHTML = '<tr><td colspan="2">No product records were returned.</td></tr>';
+    $("tableNote").textContent = "The API returned an empty product list.";
+    return;
+  }
+
+  const first = products.find(p => p && typeof p === "object");
+  if (!first) {
+    $("tableHead").innerHTML = "<tr><th>Product data</th></tr>";
+    products.slice(0, 50).forEach(item => {
+      const tr = document.createElement("tr"), td = document.createElement("td");
+      td.textContent = formatValue(item); tr.appendChild(td); rows.appendChild(tr);
+    });
+    return;
+  }
+
+  const keys = Object.keys(first).slice(0, 6);
+  const trHead = document.createElement("tr");
+  keys.forEach(key => {
+    const th = document.createElement("th");
+    th.textContent = key.replace(/[_-]/g, " ");
+    trHead.appendChild(th);
+  });
+  head.appendChild(trHead);
+
+  products.slice(0, 50).forEach(product => {
+    const tr = document.createElement("tr");
+    keys.forEach(key => {
+      const td = document.createElement("td");
+      td.textContent = formatValue(product ? product[key] : "");
+      tr.appendChild(td);
+    });
+    rows.appendChild(tr);
+  });
+  $("tableNote").textContent = "Showing up to 50 records. Total products: " + products.length + ".";
+}
+
+async function loadDashboard() {
+  try {
+    const response = await fetch("/api/data", { cache: "no-store" });
+    if (!response.ok) throw new Error("API returned HTTP " + response.status);
+    const data = await response.json();
+    const products = Array.isArray(data.products) ? data.products : [];
+    const months = Array.isArray(data.months) ? data.months : [];
+
+    $("productCount").textContent = products.length.toLocaleString();
+    $("monthCount").textContent = months.length.toLocaleString();
+    $("latestMonth").textContent = months.length ? formatValue(months[months.length - 1]) : "—";
+    $("apiState").textContent = "Connected";
+    $("systemNote").textContent = "The /api/data endpoint responded successfully.";
+    renderProducts(products);
+    drawChart(months, products);
+  } catch (error) {
+    $("apiState").textContent = "Unavailable";
+    $("systemNote").textContent = "Could not load /api/data: " + error.message;
+    $("productRows").innerHTML =
+      '<tr><td colspan="6">Dashboard data could not be loaded. Please check the application logs.</td></tr>';
+    $("tableNote").textContent = "The frontend is running, but the backend data request failed.";
+    $("priceNote").textContent = "Waiting for a successful API response.";
+  }
+}
+loadDashboard();
+</script>
 </body>
 </html>
