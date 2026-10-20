@@ -28,7 +28,32 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t drug-tariff-analytics:${BUILD_NUMBER} .'
+                sh '''
+                    docker build \
+                        -t drug-tariff-analytics:${BUILD_NUMBER} \
+                        -t joydeep115/drug-tariff-analytics:${BUILD_NUMBER} .
+                '''
+            }
+        }
+
+        stage('Push Image to Docker Hub') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        set +x
+                        echo "$DOCKERHUB_TOKEN" | docker login \
+                            -u "$DOCKERHUB_USERNAME" \
+                            --password-stdin
+                        docker push joydeep115/drug-tariff-analytics:${BUILD_NUMBER}
+                        docker logout
+                    '''
+                }
             }
         }
 
@@ -51,7 +76,7 @@ pipeline {
 
     post {
         success {
-            echo 'Tests, Docker build, and Render deployment trigger completed successfully!'
+            echo 'Tests, Docker build, Docker Hub push, and Render deployment trigger completed successfully!'
         }
         failure {
             echo 'Pipeline failed. Check the Jenkins console output.'
