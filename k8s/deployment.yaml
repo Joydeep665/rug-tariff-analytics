@@ -20,4 +20,4 @@ spec:
           image: joydeep115/drug-tariff-analytics:15
           imagePullPolicy: Always
           ports:
-            - containerPort: 10000
+            - containerPort: 5000
