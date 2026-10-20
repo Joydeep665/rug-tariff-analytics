@@ -1,0 +1,23 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drug-tariff-analytics
+  labels:
+    app: drug-tariff-analytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drug-tariff-analytics
+  template:
+    metadata:
+      labels:
+        app: drug-tariff-analytics
+    spec:
+      containers:
+        - name: drug-tariff-analytics
+          image: joydeep115/drug-tariff-analytics:15
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 10000
