@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -202,8 +201,8 @@ body.light{color-scheme:light;--bg:#f3f6fb;--panel:#fff;--panel2:#eaf0f8;
   <div class="panel">
     <div class="tablewrap">
       <table>
-        <thead id="tableHead"><tr><th>Product</th><th>Details</th></tr></thead>
-        <tbody id="productRows"><tr><td colspan="2" class="muted">Loading product data…</td></tr></tbody>
+        <thead id="tableHead"><tr><th>Product</th><th>Pack Size</th><th>Price History</th></tr></thead>
+        <tbody id="productRows"><tr><td colspan="3" class="muted">Loading product data…</td></tr></tbody>
       </table>
     </div>
     <p class="notice" id="tableNote">Connecting to /api/data…</p>
@@ -300,7 +299,7 @@ function renderProducts(products) {
   head.replaceChildren();
 
   if (!products.length) {
-    rows.innerHTML = '<tr><td colspan="2">No product records were returned.</td></tr>';
+    rows.innerHTML = '<tr><td colspan="3">No product records were returned.</td></tr>';
     $("tableNote").textContent = "The API returned an empty product list.";
     return;
   }
@@ -315,11 +314,14 @@ function renderProducts(products) {
     return;
   }
 
-  const keys = Object.keys(first).slice(0, 6);
+  // Corrected: display only the product name, pack size, and price history.
+  const keys = ["n", "pk", "pr"];
+  const labels = { n: "Product", pk: "Pack Size", pr: "Price History" };
+
   const trHead = document.createElement("tr");
   keys.forEach(key => {
     const th = document.createElement("th");
-    th.textContent = key.replace(/[_-]/g, " ");
+    th.textContent = labels[key] || key;
     trHead.appendChild(th);
   });
   head.appendChild(trHead);
@@ -333,6 +335,7 @@ function renderProducts(products) {
     });
     rows.appendChild(tr);
   });
+
   $("tableNote").textContent = "Showing up to 50 records. Total products: " + products.length + ".";
 }
 
@@ -355,11 +358,12 @@ async function loadDashboard() {
     $("apiState").textContent = "Unavailable";
     $("systemNote").textContent = "Could not load /api/data: " + error.message;
     $("productRows").innerHTML =
-      '<tr><td colspan="6">Dashboard data could not be loaded. Please check the application logs.</td></tr>';
+      '<tr><td colspan="3">Dashboard data could not be loaded. Please check the application logs.</td></tr>';
     $("tableNote").textContent = "The frontend is running, but the backend data request failed.";
     $("priceNote").textContent = "Waiting for a successful API response.";
   }
 }
+
 loadDashboard();
 </script>
 </body>
