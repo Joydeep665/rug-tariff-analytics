@@ -2,7 +2,7 @@
 
 A Flask dashboard for exploring NHS Drug Tariff price trends, category movements and price concessions, with a protected admin area for monthly uploads and Dr. Reddy's portfolio tracking.
 
-**Live dashboard:** https://drug-tariff-analytics.onrender.com
+**Live dashboard:** https://rug-tariff-analytics.onrender.com
 
 > **Data note:** Until real tariff files are uploaded, the dashboard displays illustrative sample data. Sample figures are not official NHS reimbursement prices.
 
