@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -30,11 +31,27 @@ pipeline {
                 sh 'docker build -t drug-tariff-analytics:${BUILD_NUMBER} .'
             }
         }
+
+        stage('Deploy to Render') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'render-deploy-hook',
+                        variable: 'RENDER_DEPLOY_HOOK'
+                    )
+                ]) {
+                    sh '''
+                        curl --fail --silent --show-error \
+                            -X POST "$RENDER_DEPLOY_HOOK"
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build and tests completed successfully!'
+            echo 'Tests, Docker build, and Render deployment trigger completed successfully!'
         }
         failure {
             echo 'Pipeline failed. Check the Jenkins console output.'
